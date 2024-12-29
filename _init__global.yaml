@@ -1,7 +1,6 @@
 # _init__global.yaml
 response_tokens: 300 # 300 tokens normally fits in Discord's 2000 character limit
 ignored_prefixes:
-  - "rpg"
   - "/"
   - "#"
   - ".art"

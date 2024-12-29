@@ -17,7 +17,7 @@ class D15C0R6(commANDs.Bot):
         # Assign all yaml values within the __init__ method
         self.ignored_prefixes = bot_init_data["ignored_prefixes"]
         self.username = bot_init_data["username"]
-        self.gpt_model = bot_init_data["gpt_model"]
+        self.llm_model = bot_init_data["llm_model"]
         self.home_channel_id = bot_init_data["home_channel_id"]
         self.self_channel_id = bot_init_data["self_channel_id"]
         self.self_author_id = bot_init_data["self_author_id"]
@@ -100,7 +100,7 @@ class D15C0R6(commANDs.Bot):
                 messages = self.msgs.add_to_messages(message.channel.id, nickname, prompt_without_mention, "user")
                 # Add context to the prompt
                 logging.debug(f"\nSending usr_prompt to Grok\n{messages}\n")
-                response_text = self.get_response(messages, self.gpt_model, self.response_tokens, 1, 0.55)
+                response_text = self.get_response(messages, self.llm_model, self.response_tokens, 1, 0.55)
                 if response_text:
                     self.msgs.add_to_messages(message.channel.id, self.name, response_text, "assistant")
                     logging.debug(f"\nMessage history:\n{self.msgs.messages_by_channel[message.channel.id]}\n")
