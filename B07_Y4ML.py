@@ -72,7 +72,7 @@ class Y4ML:
             logging.error(f"Error parsing the file {filename}: {str(e)}")
             return None
 
-    def save_to_file(self, dictionary, filename):
+    def save_file(self, dictionary, filename):
         """
         Saves a dictionary to a YAML file. 
 

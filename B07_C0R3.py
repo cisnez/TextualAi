@@ -6,9 +6,10 @@ from discord import Intents as InTeNTs
 from discord import utils as UtIls
 
 class D15C0R6(commANDs.Bot):
-    def __init__(self, xai_client, discord_token, bot_init_data, bot_name):
+    def __init__(self, xai_client, discord_token, bot_init_data, bot_name, msgs):
         self.name = bot_name
         self.xai_client = xai_client
+        self.msgs = msgs
         self.response_tokens = bot_init_data["response_tokens"]
         self.discord_token = discord_token
         self.command_prefix = bot_init_data["command_prefix"]
@@ -17,7 +18,6 @@ class D15C0R6(commANDs.Bot):
         self.ignored_prefixes = bot_init_data["ignored_prefixes"]
         self.username = bot_init_data["username"]
         self.gpt_model = bot_init_data["gpt_model"]
-        self.system_message = [{"role": "system", "content": bot_init_data["system_message"]}]
         self.home_channel_id = bot_init_data["home_channel_id"]
         self.self_channel_id = bot_init_data["self_channel_id"]
         self.self_author_id = bot_init_data["self_author_id"]
@@ -29,8 +29,6 @@ class D15C0R6(commANDs.Bot):
         self.allow_channel_ids = set(bot_init_data["allow_channel_ids"])
         self.ignore_author_ids = set(bot_init_data["ignore_author_ids"])
         self.ignore_channel_ids = set(bot_init_data["ignore_channel_ids"])
-        # Create a messages dictionary
-        self.messages_by_channel = {}
         # Parent class assignments for: super().__init__()
         in_tents = InTeNTs(**bot_init_data["intents"])
         super().__init__(command_prefix=self.command_prefix, intents=in_tents)
@@ -99,13 +97,13 @@ class D15C0R6(commANDs.Bot):
                 # Remove bot's mention from the message
                 clean_message = UtIls.remove_markdown(str(self.user.mention))
                 prompt_without_mention = message.content.replace(clean_message, "").strip()
-                messages = self.add_to_messages(message.channel.id, nickname, prompt_without_mention, "user")
+                messages = self.msgs.add_to_messages(message.channel.id, nickname, prompt_without_mention, "user")
                 # Add context to the prompt
                 logging.debug(f"\nSending usr_prompt to Grok\n{messages}\n")
                 response_text = self.get_response(messages, self.gpt_model, self.response_tokens, 1, 0.55)
                 if response_text:
-                    self.add_to_messages(message.channel.id, self.name, response_text, "assistant")
-                    logging.debug(f"\nMessage history:\n{self.messages_by_channel[message.channel.id]}\n")
+                    self.msgs.add_to_messages(message.channel.id, self.name, response_text, "assistant")
+                    logging.debug(f"\nMessage history:\n{self.msgs.messages_by_channel[message.channel.id]}\n")
                     await message.channel.send(response_text)
                 else:
                     logging.error("No response from get_response")
@@ -120,24 +118,6 @@ class D15C0R6(commANDs.Bot):
         # Always process commands at the end of the on_message event
         await self.process_commands(message)
         logging.debug(f'\n-- END ON_MESSAGE --\n')
-
-    def add_to_messages(self, channel, nickname, message, role):
-        if channel not in self.messages_by_channel:
-           self.messages_by_channel[channel] = []
-           self.messages_by_channel[channel].extend(self.system_message)
-        if role == "assistant":
-            self.messages_by_channel[channel].append({
-                "role": "assistant",
-                "content": f"{message}"
-            })
-        elif role == "user":
-            self.messages_by_channel[channel].append({
-                "role": "user",
-                "content": f'{nickname} says, "{message}"'
-            })
-        if len(self.messages_by_channel[channel]) > 11:  # Keep 7 messages for example
-            self.messages_by_channel[channel].pop(1)
-        return self.messages_by_channel[channel]
 
     def get_response(self, messages, model, max_response_tokens, n_responses, creativity):
         try:
