@@ -79,6 +79,7 @@ class D15C0R6(commANDs.Bot):
             await message.channel.send("Hello Channel!")
 
         elif message.content.startswith('.shutdown') and (message.author.id in self.allow_author_ids):
+            await message.channel.send("Shutting down...")
             logging.info('.shutdown command received.')
             await self.close()
 
