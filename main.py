@@ -8,17 +8,8 @@ bot_name = sys.argv[1].lower()
 import logging
 logging.basicConfig(filename=f'main~{bot_name}.log', filemode='w', level=logging.INFO)
 
-import os
-import asyncio
-from openai import OpenAI
-from B07_C0R3 import D15C0R6
-from B07_Y4ML import Y4ML
-from B07_M56 import M56
-from textual.app import App, ComposeResult
-from textual.containers import HorizontalGroup, VerticalScroll
-from textual.widgets import Button, Footer, Header
-
 # Create a yaml object
+from B07_Y4ML import Y4ML
 yaml = Y4ML()
 
 # Define all the required YAML files to initialize Discord Bot.
@@ -27,17 +18,26 @@ config_files = ["_init__global.yaml", f"_init_{bot_name}.yaml"]
 bot_init_data = yaml.merge_files(config_files)
 
 # Get key and token from the OS environment
+import os
 xai_api_key = os.getenv("XAI_API_KEY")
 bot_discord_token = os.environ.get(f'{bot_name.upper()}_TOKEN')
 
 # Create xAI API Client
+from openai import OpenAI
 xai_client = OpenAI(
     api_key=xai_api_key,
     base_url="https://api.x.ai/v1",
 )
     
 # Create a messages object
+from B07_M56 import M56
 msgs = M56(bot_init_data["system_message"])
+
+from B07_C0R3 import D15C0R6
+from textual.app import App, ComposeResult
+from textual.containers import HorizontalGroup, VerticalScroll
+from textual.widgets import Pretty, TextArea, Button, Footer, Header
+import asyncio
 
 class Discord_Bot(HorizontalGroup):
 
@@ -74,6 +74,10 @@ class Discord_Bot(HorizontalGroup):
             await asyncio.sleep(2)
         await self.bot_task.cancel()
 
+class Pretty_Init(HorizontalGroup):
+    def compose(self) -> ComposeResult:
+        yield Pretty(bot_init_data)
+
 class xAI_Discord_App(App):
     """A Textual app to manage Discord bot using OpenAI API."""
 
@@ -84,7 +88,8 @@ class xAI_Discord_App(App):
         """Create child widgets for the app."""
         yield Header()
         yield Footer()
-        yield VerticalScroll(Discord_Bot())
+        yield Discord_Bot()
+        yield VerticalScroll(Pretty_Init())
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""

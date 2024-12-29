@@ -6,21 +6,25 @@ Discord_Bot {
     padding: 1;
 }
 
+System_Prompt {
+    height: 5;
+}
+
 Button {
     width: 16;
 }
 
-#start {
+#bot_name {
     dock: left;
+}
+
+#start {
+    dock: right;
 }
 
 #stop {
-    dock: left;
-    display: none;
-}
-
-#bot_name {
     dock: right;
+    display: none;
 }
 
 .started {
