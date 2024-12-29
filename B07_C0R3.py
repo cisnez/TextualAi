@@ -13,10 +13,8 @@ class D15C0R6(commANDs.Bot):
         self.response_tokens = bot_init_data["response_tokens"]
         self.discord_token = discord_token
         self.command_prefix = bot_init_data["command_prefix"]
-        
         # Assign all yaml values within the __init__ method
         self.ignored_prefixes = bot_init_data["ignored_prefixes"]
-        self.username = bot_init_data["username"]
         self.llm_model = bot_init_data["llm_model"]
         # A set ensures that these collections only store unique elements
         self.allow_author_ids = set(bot_init_data["allow_author_ids"])
