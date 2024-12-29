@@ -1,4 +1,5 @@
 # _init__global.yaml
+llm_model: "grok-beta"
 response_tokens: 300 # 300 tokens normally fits in Discord's 2000 character limit
 ignored_prefixes:
   - "/"
@@ -16,3 +17,10 @@ allow_channel_ids:
   - 
 allow_author_ids:
   - 465419968276594688 # c15n32#0
+intents:
+  typing: true
+  presences: true
+  messages: true
+  guilds: true
+  members: false
+  message_content: true

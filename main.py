@@ -13,7 +13,7 @@ from B07_Y4ML import Y4ML
 yaml = Y4ML()
 
 # Define all the required YAML files to initialize Discord Bot.
-config_files = ["_init__global.yaml", f"_init_{bot_name}.yaml"]
+config_files = [f"_init_{bot_name}.yaml", "_init__global.yaml"]
 # Merge the files using a B07_Y4ML.py method.
 bot_init_data = yaml.merge_files(config_files)
 

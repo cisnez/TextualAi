@@ -1,27 +1,13 @@
 # _init_botname.yaml
 command_prefix: "~"
 username: &username "BotName"
-llm_model: "grok-beta"
 system_message: "You are my trusted pithy friend. Keep your response under 300 tokens. Pay attention to user names for context, and tailor responses accordingly. Embelish your message with :emoji:. Be as clear as the five clairvoyant clairs."
-intents:
-  typing: true
-  presences: true
-  messages: true
-  guilds: true
-  members: false
-  message_content: true
 ignored_prefixes:
   - 
-bot_channel_id: 
-self_channel_id: 
-self_author_id: &selfAuthorID 
-self_author_name: ""
-home_channel_id: 
-hello_channel_id: 
 ignore_channel_ids:
  -
 ignore_author_ids:
- - *selfAuthorID
+ - 
 allow_channel_ids:
  - 
 allow_author_ids:

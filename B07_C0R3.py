@@ -18,12 +18,6 @@ class D15C0R6(commANDs.Bot):
         self.ignored_prefixes = bot_init_data["ignored_prefixes"]
         self.username = bot_init_data["username"]
         self.llm_model = bot_init_data["llm_model"]
-        self.home_channel_id = bot_init_data["home_channel_id"]
-        self.self_channel_id = bot_init_data["self_channel_id"]
-        self.self_author_id = bot_init_data["self_author_id"]
-        self.self_author_name = bot_init_data["self_author_name"]
-        self.bot_channel_id = bot_init_data["bot_channel_id"]
-        self.hello_channel_id = bot_init_data["hello_channel_id"]
         # A set ensures that these collections only store unique elements
         self.allow_author_ids = set(bot_init_data["allow_author_ids"])
         self.allow_channel_ids = set(bot_init_data["allow_channel_ids"])
