@@ -26,7 +26,7 @@ bot_discord_token = os.environ.get(f'{bot_name.upper()}_TOKEN')
 from openai import OpenAI
 xai_client = OpenAI(
     api_key=xai_api_key,
-    base_url="https://api.x.ai/v1",
+    base_url=bot_init_data["llm_url"],
 )
     
 # Create a messages object

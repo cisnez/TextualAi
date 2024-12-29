@@ -37,7 +37,7 @@ class D15C0R6(commANDs.Bot):
         logging.info(f"{self.user} has disconnected from Discord.")
 
     async def on_ready(self):
-        logging.info(f"{self.user} ready to receive commands.")
+        logging.info(f"{self.user} ready to receive commands. ID: {self.user.id}")
 
     async def on_resumed(self):
         logging.info(f"{self.user} has reconnected to Discord; ready to receive commands.")
@@ -45,17 +45,21 @@ class D15C0R6(commANDs.Bot):
     # If you define an on_message event, the bot will not process commands automatically unless you explicitly call `await self.process_commands(message)`. This is because the `on_message`` event is processed before the command, so if you don't call `process_commands`, the command processing stops at `on_message`.
     async def on_message(self, message):
         logging.debug(f'\n-- BEGIN ON_MESSAGE --')
-        if message.channel.id in self.ignore_channel_ids:
+        
+        if message.author.id == self.user.id:
+            logging.debug('Ignoring message from self.')
+
+        elif message.channel.id in self.ignore_channel_ids:
             logging.debug(f'Ignored Channel ID: {message.channel.name}\n')
 
         elif message.author.id in self.ignore_author_ids:
-            logging.debug(f'Ignoring message due to ignored author: {message.author.name}')
+            logging.debug(f'Ignoring Author Name: {message.author.name}')
  
         elif message.content.startswith('.delete') and (message.author.id in self.allow_author_ids):
             if message.reference:  # Check if the message is a reply
                 try:
                     referenced_message = await message.channel.fetch_message(message.reference.message_id)
-                    if referenced_message.author.id == self.self_author_id:
+                    if referenced_message.author.id == self.user.id:
                         await referenced_message.delete()
                         logging.info(f"Deleted message from self, ID: {referenced_message.author.id}.")
                         # await message.delete()  # Delete the command message
@@ -103,11 +107,11 @@ class D15C0R6(commANDs.Bot):
                     logging.error("No response from get_response")
 
         else:
-            if (message.author.id != self.self_author_id):
+            if (message.author.id != self.user.id):
                 logging.debug('message from else')
                 logging.debug(f'-----\n`message.author.name`: `{message.author.name}`\n`message.channel.id`: `{message.channel.id}`,\n`message.channel.name`: `{message.channel.name}`,\n`message.id`: `{message.id}`,\n`message.author.id`: `{message.author.id}`\n')
             else:
-                logging.debug = 'message from self . . . how did the code even get here !?'
+                logging.debug('message from self . . . how did the code even get here !?')
                 logging.debug(f'-----\n`message.author.name`: `{message.author.name}`\n`message.channel.id`: `{message.channel.id}`,\n`message.channel.name`: `{message.channel.name}`,\n`message.id`: `{message.id}`,\n`message.author.id`: `{message.author.id}`\n')
         # Always process commands at the end of the on_message event
         await self.process_commands(message)

@@ -19,3 +19,4 @@ A Python based Discord bot using `Discord API` and xAI Grok `OpenAI API` to prov
 4. Create a system environment variable for your bot's DISCORD_TOKEN
 5. Install requirements. `pip install -r requirements.txt`
 6. Run the bot using `python main.py botname`.
+7. Check the new log file `main~botname.log`
