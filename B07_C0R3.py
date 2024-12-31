@@ -43,11 +43,15 @@ class D15C0R6(commANDs.Bot):
 
     async def on_member_remove(self, member):
         channel = self.get_channel(self.home_channel_id)
-        await channel.send(f":wave: {member.name} has left the server.\nID: {member.id}")
+        nickname = member.nick if member.nick is not None else member.display_name
+        await channel.send(f":wave: {nickname} has left the server.\nID: {member.id}\nName: {member.name}")
+        logging.info(f"{nickname} has left the server.")
 
     async def on_member_join(self, member):
         channel = self.get_channel(self.home_channel_id)
-        await channel.send(f":wave: {member.name} has joined the server.\nID: {member.id}")
+        nickname = member.nick if member.nick is not None else member.display_name
+        await channel.send(f":cake: {nickname} has joined the server.\nID: {member.id}\nName: {member.name}")
+        logging.info(f"{nickname} has joined the server.")
 
     # If you define an on_message event, the bot will not process commands automatically unless you explicitly call `await self.process_commands(message)`. This is because the `on_message`` event is processed before the command, so if you don't call `process_commands`, the command processing stops at `on_message`.
     async def on_message(self, message):
