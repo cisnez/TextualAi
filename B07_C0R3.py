@@ -14,6 +14,7 @@ class D15C0R6(commANDs.Bot):
         self.discord_token = discord_token
         self.command_prefix = bot_init_data["command_prefix"]
         # Assign all yaml values within the __init__ method
+        self.home_channel_id = bot_init_data["home_channel_id"]
         self.ignored_prefixes = bot_init_data["ignored_prefixes"]
         self.llm_model = bot_init_data["llm_model"]
         # A set ensures that these collections only store unique elements
@@ -39,6 +40,14 @@ class D15C0R6(commANDs.Bot):
 
     async def on_resumed(self):
         logging.info(f"{self.user} has reconnected to Discord; ready to receive commands.")
+
+    async def on_member_remove(self, member):
+        channel = self.get_channel(self.home_channel_id)
+        await channel.send(f":wave: {member.name} has left the server.\nID: {member.id}")
+
+    async def on_member_join(self, member):
+        channel = self.get_channel(self.home_channel_id)
+        await channel.send(f":wave: {member.name} has joined the server.\nID: {member.id}")
 
     # If you define an on_message event, the bot will not process commands automatically unless you explicitly call `await self.process_commands(message)`. This is because the `on_message`` event is processed before the command, so if you don't call `process_commands`, the command processing stops at `on_message`.
     async def on_message(self, message):
