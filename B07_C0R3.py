@@ -53,6 +53,16 @@ class D15C0R6(commANDs.Bot):
         await channel.send(f":cake: {nickname} has joined the server.\nID: {member.id}\nName: {member.name}")
         logging.info(f"{nickname} has joined the server.")
 
+    async def on_user_update(self, before, after):
+        channel = self.get_channel(self.home_channel_id)
+        if before.avatar != after.avatar:
+            avatar_changed = "Yes"
+        else:
+            avatar_changed = "No"
+        if before.name != after.name or before.display_name != after.display_name or before.avatar != after.avatar:
+            await channel.send(f":bangbang: User profile updated.\nBefore: ```User:{before.name}\nDisplay Name:{before.display_name}```After: ```User:{after.name}\nDisplay Name:{after.display_name}```Avatar Changed? [{avatar_changed}]")
+        logging.info(f"User {before} has updated their profile. {after}")
+
     # If you define an on_message event, the bot will not process commands automatically unless you explicitly call `await self.process_commands(message)`. This is because the `on_message`` event is processed before the command, so if you don't call `process_commands`, the command processing stops at `on_message`.
     async def on_message(self, message):
         logging.debug(f'\n-- BEGIN ON_MESSAGE --')
