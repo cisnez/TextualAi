@@ -64,7 +64,8 @@ class D15C0R6(commANDs.Bot):
 
     # If you define an on_message event, the bot will not process commands automatically unless you explicitly call `await self.process_commands(message)`. This is because the `on_message`` event is processed before the command, so if you don't call `process_commands`, the command processing stops at `on_message`.
     async def on_message(self, message):
-        logging.debug(f'\n-- BEGIN ON_MESSAGE --')
+        nickname = message.author.nick if message.author.nick is not None else message.author.display_name
+        logging.debug(f'\n-- BEGIN ON_MESSAGE FROM `{nickname}` --')
         
         if message.author.id == self.user.id:
             self.msgs.add_to_messages(message.channel.id, self.name, message.content, "assistant")
@@ -74,6 +75,8 @@ class D15C0R6(commANDs.Bot):
             logging.debug(f'Ignored Channel ID: {message.channel.name}\n')
 
         elif message.author.id in self.ignore_author_ids:
+            self.msgs.add_to_messages(message.channel.id, nickname, message.content, "user")
+            self.msgs.add_to_messages(message.channel.id, "system", f"Ignored message from {nickname}", "system")
             logging.debug(f'Ignoring Author Name: {message.author.name}')
  
         elif message.content.startswith('.delete') and (message.author.id in self.allow_author_ids):
@@ -81,7 +84,9 @@ class D15C0R6(commANDs.Bot):
                 try:
                     referenced_message = await message.channel.fetch_message(message.reference.message_id)
                     if referenced_message.author.id == self.user.id:
+                        self.msgs.add_to_messages(message.channel.id, nickname, f"Delete your message with ID: {referenced_message.id}", "user")
                         await referenced_message.delete()
+                        self.msgs.add_to_messages(message.channel.id, self.name, f"Deleted my message as requested by {nickname}", "system")
                         logging.info(f"Deleted message from self, ID: {referenced_message.author.id}.")
                     else:
                         logging.debug(f"Delete request for message by other user ID: {referenced_message.author.id}.")
@@ -93,7 +98,7 @@ class D15C0R6(commANDs.Bot):
         
         elif message.content.startswith('.hello'):
             reply = "Hello Channel!"
-            self.msgs.add_to_messages(message.channel.id, message.author.display_name, reply, "user")
+            self.msgs.add_to_messages(message.channel.id, nickname, reply, "user")
             await message.channel.send(reply)
             logging.debug(f'{self.name}: `.hello` command received.')
 
@@ -103,7 +108,10 @@ class D15C0R6(commANDs.Bot):
             await self.close()
         
         elif "<|separator|>" in message.content:
-            await message.channel.send("Are you trying to break me?")
+            reply = "Are you trying to break me?"
+            self.msgs.add_to_messages(message.channel.id, message.author.name, "<|violation found in message|>", "user")
+            self.msgs.add_to_messages(message.channel.id, self.name, reply, "assistant")
+            await message.channel.send(reply)
             logging.info("<|separator|> violation found in message.")
 
         elif any(message.content.startswith(prefix) for prefix in self.ignored_prefixes):
@@ -116,8 +124,6 @@ class D15C0R6(commANDs.Bot):
             logging.debug(f"\nMessage from {message.author.name} received:\n{message.content}\n")
             # The bot will show as typing while executing the code inside this block
             # So place your logic that takes time inside this block
-            member = message.author
-            nickname = member.nick if member.nick is not None else member.display_name
             async with message.channel.typing():
                 # Remove bot's mention from the message
                 clean_message = UtIls.remove_markdown(str(self.user.mention))
@@ -142,7 +148,7 @@ class D15C0R6(commANDs.Bot):
                 logging.debug(f'-----\n`message.author.name`: `{message.author.name}`\n`message.channel.id`: `{message.channel.id}`,\n`message.channel.name`: `{message.channel.name}`,\n`message.id`: `{message.id}`,\n`message.author.id`: `{message.author.id}`\n')
         # Always process commands at the end of the on_message event
         await self.process_commands(message)
-        logging.debug(f'\n-- END ON_MESSAGE --\n')
+        logging.debug(f'\n-- END ON_MESSAGE FROM `{nickname}` --\n')
 
     def get_response(self, messages, model, max_response_tokens, n_responses, creativity):
         try:

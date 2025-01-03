@@ -6,7 +6,7 @@ class M56:
     def __init__(self, system_message, messages_per_channel):
         # Create a messages dictionary
         self.messages_by_channel = {}
-        self.system_message = [{"role": "system", "content": system_message}]
+        self.system_message = system_message
         self.messages_per_channel = messages_per_channel
     """
     This class represents a Message manager, providing functionalities related to conversations. 
@@ -14,12 +14,12 @@ class M56:
 
     def add_to_messages(self, channel, nickname, message, role):
         if channel not in self.messages_by_channel:
-           self.messages_by_channel[channel] = []
            # Init a new channel with the `system_message` set in yaml config.
-           self.messages_by_channel[channel].extend(self.system_message)
-        if role == "assistant":
+           self.messages_by_channel[channel] = []
+           self.messages_by_channel[channel].extend([{"role": "system", "content": self.system_message}])
+        if role == "assistant" or role == "system":
             self.messages_by_channel[channel].append({
-                "role": "assistant",
+                "role": role,
                 "content": f"{message}"
             })
         elif role == "user":
