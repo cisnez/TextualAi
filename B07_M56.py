@@ -15,6 +15,7 @@ class M56:
     def add_to_messages(self, channel, nickname, message, role):
         if channel not in self.messages_by_channel:
            self.messages_by_channel[channel] = []
+           # Init a new channel with the `system_message` set in yaml config.
            self.messages_by_channel[channel].extend(self.system_message)
         if role == "assistant":
             self.messages_by_channel[channel].append({
@@ -26,6 +27,8 @@ class M56:
                 "role": "user",
                 "content": f'{nickname} says, "{message}"'
             })
-        if len(self.messages_by_channel[channel]) > self.messages_per_channel:  # Keep 7 messages for example
+        # Keep a number of total system+assistant+user messages per channel
+        #   `messages_per_channel` set in yaml config.
+        if len(self.messages_by_channel[channel]) > self.messages_per_channel:
             self.messages_by_channel[channel].pop(1)
         return self.messages_by_channel[channel]

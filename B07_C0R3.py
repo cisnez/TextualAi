@@ -67,7 +67,8 @@ class D15C0R6(commANDs.Bot):
         logging.debug(f'\n-- BEGIN ON_MESSAGE --')
         
         if message.author.id == self.user.id:
-            logging.debug('Ignoring message from self.')
+            self.msgs.add_to_messages(message.channel.id, self.name, message.content, "assistant")
+            logging.debug(f'{self.bot_name}: Added message with assistant role.')
 
         elif message.channel.id in self.ignore_channel_ids:
             logging.debug(f'Ignored Channel ID: {message.channel.name}\n')
@@ -124,7 +125,7 @@ class D15C0R6(commANDs.Bot):
                 logging.debug(f"\nSending usr_prompt to Grok\n{messages}\n")
                 response_text = self.get_response(messages, self.llm_model, self.response_tokens, 1, 0.55)
                 if response_text:
-                    self.msgs.add_to_messages(message.channel.id, self.name, response_text, "assistant")
+                    # Add response text to messages at start of on_message()
                     logging.debug(f"\nMessage history:\n{self.msgs.messages_by_channel[message.channel.id]}\n")
                     await message.channel.send(response_text)
                 else:
