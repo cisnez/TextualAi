@@ -1,5 +1,6 @@
 # _init__global.yaml
-llm_model: "grok-beta"
+messages_per_channel: 11
+llm_model: "grok-2-latest"
 llm_url: "https://api.x.ai/v1"
 response_tokens: 300 # 300 tokens normally fits in Discord's 2000 character limit
 ignored_prefixes:

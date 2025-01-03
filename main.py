@@ -31,7 +31,7 @@ xai_client = OpenAI(
     
 # Create a messages object
 from B07_M56 import M56
-msgs = M56(bot_init_data["system_message"])
+msgs = M56(bot_init_data["system_message"], bot_init_data["messages_per_channel"])
 
 from B07_C0R3 import D15C0R6
 from textual.app import App, ComposeResult

@@ -3,10 +3,11 @@ import logging
 
 class M56:
     # Initialize a M56 instance.
-    def __init__(self, system_message):
+    def __init__(self, system_message, messages_per_channel):
         # Create a messages dictionary
         self.messages_by_channel = {}
         self.system_message = [{"role": "system", "content": system_message}]
+        self.messages_per_channel = messages_per_channel
     """
     This class represents a Message manager, providing functionalities related to conversations. 
     """
@@ -25,6 +26,6 @@ class M56:
                 "role": "user",
                 "content": f'{nickname} says, "{message}"'
             })
-        if len(self.messages_by_channel[channel]) > 11:  # Keep 7 messages for example
+        if len(self.messages_by_channel[channel]) > self.messages_per_channel:  # Keep 7 messages for example
             self.messages_by_channel[channel].pop(1)
         return self.messages_by_channel[channel]

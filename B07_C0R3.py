@@ -55,11 +55,10 @@ class D15C0R6(commANDs.Bot):
 
     async def on_user_update(self, before, after):
         channel = self.get_channel(self.home_channel_id)
-        if before.avatar != after.avatar:
-            avatar_changed = "**Yes**"
+        avatar_changed = "**Yes**" if before.avatar != after.avatar else "**No**"
+        if before.name == after.name and before.display_name == after.display_name:
+            await channel.send(f":bangbang: **User profile updated.** :bangbang:\nUser:{after.name}\nDisplay Name:{after.display_name}\nAvatar Changed? [{avatar_changed}]")
         else:
-            avatar_changed = "**No**"
-        if before.name != after.name or before.display_name != after.display_name or before.avatar != after.avatar:
             await channel.send(f":bangbang: **User profile updated.** :bangbang:\nBefore: ```User:{before.name}\nDisplay Name:{before.display_name}```After: ```User:{after.name}\nDisplay Name:{after.display_name}```Avatar Changed? [{avatar_changed}]")
         logging.info(f"User {before} has updated their profile. {after}")
 
@@ -99,6 +98,10 @@ class D15C0R6(commANDs.Bot):
             await message.channel.send("Shutting down...")
             logging.info('.shutdown command received.')
             await self.close()
+        
+        elif "<|separator|>" in message.content:
+            await message.channel.send("Are you trying to break me?")
+            logging.info("<|separator|> violation found in message.")
 
         elif any(message.content.startswith(prefix) for prefix in self.ignored_prefixes):
             logging.debug(self.ignored_prefixes)
