@@ -83,17 +83,19 @@ class D15C0R6(commANDs.Bot):
                     if referenced_message.author.id == self.user.id:
                         await referenced_message.delete()
                         logging.info(f"Deleted message from self, ID: {referenced_message.author.id}.")
-                        # await message.delete()  # Delete the command message
-                        # logging.info(f"Deleted command meessage from: {message.author.id}.")
                     else:
-                        logging.info(f"Delete request for other user ID: {referenced_message.author.id}.")
+                        logging.debug(f"Delete request for message by other user ID: {referenced_message.author.id}.")
                 except Exception as e:
                     await message.channel.send(f"Error deleting message: {e}")
                     logging.error(f"Error deleting message: {e}")
+                await message.delete()  # Delete the command message if allowed
+                logging.debug(f"Attempted to delete command message from: {message.author.id}.")
         
         elif message.content.startswith('.hello'):
-            logging.debug('.hello')
-            await message.channel.send("Hello Channel!")
+            reply = "Hello Channel!"
+            self.msgs.add_to_messages(message.channel.id, message.author.display_name, reply, "user")
+            await message.channel.send(reply)
+            logging.debug(f'{self.name}: `.hello` command received.')
 
         elif message.content.startswith('.shutdown') and (message.author.id in self.allow_author_ids):
             await message.channel.send("Shutting down...")
