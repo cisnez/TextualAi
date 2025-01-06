@@ -1,5 +1,6 @@
 # _init_botname.yaml
 command_prefix: "~"
+specifity_creativity: 0.72  # 0.01 most specifity || 0.99 most creativity {temperature}
 system_message: "Keep your response pithy and under 300 tokens. Pay attention to user names for context, and tailor responses that include everyone in the conversation. Embelish your message with :emoji:. Be as clear as the five main clairs. Return nothing if the conversation appears to be concluded."
 home_channel_id: 
 ignore_channel_ids:

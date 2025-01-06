@@ -17,6 +17,7 @@ class D15C0R6(commANDs.Bot):
         self.home_channel_id = bot_init_data["home_channel_id"]
         self.ignored_prefixes = bot_init_data["ignored_prefixes"]
         self.llm_model = bot_init_data["llm_model"]
+        self.specifity_creativity = bot_init_data["specifity_creativity"]
         # A set ensures that these collections only store unique elements
         self.allow_author_ids = set(bot_init_data["allow_author_ids"])
         self.allow_channel_ids = set(bot_init_data["allow_channel_ids"])
@@ -128,17 +129,19 @@ class D15C0R6(commANDs.Bot):
                 messages = self.msgs.add_to_messages(message.channel.id, nickname, prompt_without_mention, "user")
                 # Add context to the prompt
                 logging.debug(f"\nSending usr_prompt to Grok\n{messages}\n")
-                response_text = self.get_response(messages, self.llm_model, self.response_tokens, 1, 0.55)
+                response_text = self.get_response(messages, self.llm_model, self.response_tokens, 1, self.specifity_creativity)
                 if response_text:
                     # Add response text to messages at start of on_message()
-                    logging.debug(f"\nMessage history:\n{self.msgs.messages_by_channel[message.channel.id]}\n")
                     await message.channel.send(response_text)
+                    logging.debug(f"\nMessage history:\n{self.msgs.messages_by_channel[message.channel.id]}\n")
                 else:
                     logging.error("No response from get_response")
 
         else:
             if (message.author.id != self.user.id):
                 self.msgs.add_to_messages(message.channel.id, nickname, message.content, "user")
+                messages = self.msgs.add_to_messages(message.channel.id, nickname, f"Ignored message from: {nickname}", "system")
+
                 logging.debug('message from else')
                 logging.debug(f'-----\n`message.author.name`: `{message.author.name}`\n`message.channel.id`: `{message.channel.id}`,\n`message.channel.name`: `{message.channel.name}`,\n`message.id`: `{message.id}`,\n`message.author.id`: `{message.author.id}`\n')
             else:
@@ -148,7 +151,7 @@ class D15C0R6(commANDs.Bot):
         await self.process_commands(message)
         logging.debug(f'\n-- END ON_MESSAGE FROM `{nickname}` --\n')
 
-    def get_response(self, messages, model, max_response_tokens, n_responses, creativity):
+    def get_response(self, messages, model, max_response_tokens, n_responses, specifity_creativity):
         try:
             completions = self.xai_client.chat.completions.create(
                 # "grok-beta" set in the init file
@@ -162,7 +165,7 @@ class D15C0R6(commANDs.Bot):
                 n=n_responses,
                 stop=None,
                 # specifity < 0.5 > creativity
-                temperature=creativity,
+                temperature=specifity_creativity,
             )
             response = completions.choices[0].message.content
             return response
