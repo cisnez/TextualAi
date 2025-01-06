@@ -67,7 +67,11 @@ class D15C0R6(commANDs.Bot):
         nickname = message.author.nick if message.author.nick is not None else message.author.display_name
         logging.debug(f'\n-- BEGIN ON_MESSAGE FROM `{nickname}` --')
         
-        if message.author.id == self.user.id:
+        if "<|separator|>" in message.content:
+            # In case LLM returns nothing the API returns `<|seperator|>`, which throws an exception error.
+            logging.info("<|separator|> violation found in message.")
+
+        elif message.author.id == self.user.id:
             self.msgs.add_to_messages(message.channel.id, self.name, message.content, "assistant")
             logging.debug(f'{self.bot_name}: Added message with assistant role.')
 
@@ -107,13 +111,6 @@ class D15C0R6(commANDs.Bot):
             logging.info('.shutdown command received.')
             await self.close()
         
-        elif "<|separator|>" in message.content:
-            reply = "Are you trying to break me?"
-            self.msgs.add_to_messages(message.channel.id, message.author.name, "<|violation found in message|>", "user")
-            self.msgs.add_to_messages(message.channel.id, self.name, reply, "assistant")
-            await message.channel.send(reply)
-            logging.info("<|separator|> violation found in message.")
-
         elif any(message.content.startswith(prefix) for prefix in self.ignored_prefixes):
             logging.debug(self.ignored_prefixes)
             for prefix in self.ignored_prefixes:
