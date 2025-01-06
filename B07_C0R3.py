@@ -81,8 +81,8 @@ class D15C0R6(commANDs.Bot):
         elif message.author.id in self.ignore_author_ids:
             self.msgs.add_to_messages(message.channel.id, nickname, message.content, "user")
             self.msgs.add_to_messages(message.channel.id, "system", f"Ignored message from {nickname}", "system")
-            logging.debug(f'Ignoring Author Name: {message.author.name}')
- 
+            logging.debug(f'Ignoring Author: {nickname}')
+
         elif message.content.startswith('.delete') and (message.author.id in self.allow_author_ids):
             if message.reference:  # Check if the message is a reply
                 try:
@@ -138,6 +138,7 @@ class D15C0R6(commANDs.Bot):
 
         else:
             if (message.author.id != self.user.id):
+                self.msgs.add_to_messages(message.channel.id, nickname, message.content, "user")
                 logging.debug('message from else')
                 logging.debug(f'-----\n`message.author.name`: `{message.author.name}`\n`message.channel.id`: `{message.channel.id}`,\n`message.channel.name`: `{message.channel.name}`,\n`message.id`: `{message.id}`,\n`message.author.id`: `{message.author.id}`\n')
             else:
