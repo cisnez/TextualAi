@@ -73,7 +73,7 @@ class D15C0R6(commANDs.Bot):
 
         elif message.author.id == self.user.id:
             self.msgs.add_to_messages(message.channel.id, self.name, message.content, "assistant")
-            logging.debug(f'{self.bot_name}: Added message with assistant role.')
+            logging.debug(f'{self.name}: Added message with assistant role.')
 
         elif message.channel.id in self.ignore_channel_ids:
             logging.debug(f'Ignored Channel ID: {message.channel.name}\n')
