@@ -72,6 +72,9 @@ class D15C0R6(commANDs.Bot):
             # In case LLM returns nothing the API returns `<|seperator|>`, which throws an exception error.
             logging.info("<|separator|> violation found in message.")
 
+        elif message.attachments and not message.content:
+            logging.debug("Message with attachment and no text received.")
+        
         elif message.author.id == self.user.id:
             self.msgs.add_to_messages(message.channel.id, self.name, message.content, "assistant")
             logging.debug(f'{self.name}: Added message with assistant role.')
