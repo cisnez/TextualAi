@@ -78,7 +78,7 @@ class Pretty_Init(HorizontalGroup):
     def compose(self) -> ComposeResult:
         yield Pretty(bot_init_data)
 
-class xAI_Discord_App(App):
+class TextualAi(App):
     """A Textual app to manage Discord bot using OpenAI API."""
 
     CSS_PATH = "main.tcss"
@@ -98,5 +98,5 @@ class xAI_Discord_App(App):
         )
 
 if __name__ == "__main__":
-    app = xAI_Discord_App()
+    app = TextualAi()
     app.run()
