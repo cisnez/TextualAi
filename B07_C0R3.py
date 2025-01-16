@@ -115,6 +115,11 @@ class D15C0R6(commANDs.Bot):
             logging.info('.shutdown command received.')
             await self.close()
         
+        elif message.content.startswith('.pin') and (message.author.id in self.allow_author_ids):
+            replied_message = await message.channel.fetch_message(message.reference.message_id)
+            await replied_message.pin()
+            await message.channel.send(f"Pinned message: {replied_message.content}")
+            
         elif any(message.content.startswith(prefix) for prefix in self.ignored_prefixes):
             logging.debug(self.ignored_prefixes)
             for prefix in self.ignored_prefixes:
