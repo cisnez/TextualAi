@@ -68,25 +68,27 @@ class D15C0R6(commANDs.Bot):
         nickname = message.author.nick if message.author.nick is not None else message.author.display_name
         logging.debug(f'\n-- BEGIN ON_MESSAGE FROM `{nickname}` --')
         
-        if "<|separator|>" in message.content:
+        if message.channel.id in self.ignore_channel_ids:
+            logging.debug(f'Ignored Channel ID: {message.channel.name}\n')
+
+        elif "<|separator|>" in message.content:
             # In case LLM returns nothing the API returns `<|seperator|>`, which throws an exception error.
+            self.msgs.add_to_messages(message.channel.id, self.name, f"Malformed message from {nickname}.", "system")
             logging.info("<|separator|> violation found in message.")
 
-        elif message.attachments and not message.content:
-            logging.debug("Message with attachment and no text received.")
-        
         elif message.author.id == self.user.id:
             self.msgs.add_to_messages(message.channel.id, self.name, message.content, "assistant")
             logging.debug(f'{self.name}: Added message with assistant role.')
-
-        elif message.channel.id in self.ignore_channel_ids:
-            logging.debug(f'Ignored Channel ID: {message.channel.name}\n')
 
         elif message.author.id in self.ignore_author_ids:
             self.msgs.add_to_messages(message.channel.id, nickname, message.content, "user")
             self.msgs.add_to_messages(message.channel.id, "system", f"Ignored message from {nickname}", "system")
             logging.debug(f'Ignoring Author: {nickname}')
 
+        elif message.attachments and not message.content:
+            self.msgs.add_to_messages(message.channel.id, nickname, "Attachment with no message posted.", "system")
+            logging.debug("Message with attachment and no text received.")
+        
         elif message.content.startswith('.delete') and (message.author.id in self.allow_author_ids):
             if message.reference:  # Check if the message is a reply
                 try:
@@ -146,18 +148,13 @@ class D15C0R6(commANDs.Bot):
                     logging.error("No response from get_response")
 
         else:
-            if (message.author.id != self.user.id):
-                self.msgs.add_to_messages(message.channel.id, nickname, message.content, "user")
-                messages = self.msgs.add_to_messages(message.channel.id, nickname, f"Ignored message from: {nickname}", "system")
+            # Add message from all else to messages (First we checked if from self, right!?)
+            self.msgs.add_to_messages(message.channel.id, nickname, message.content, "user")
+            logging.debug(f'\n--- Message from ALL ELSE ---> `{nickname}`\n')
 
-                logging.debug('message from else')
-                logging.debug(f'-----\n`message.author.name`: `{message.author.name}`\n`message.channel.id`: `{message.channel.id}`,\n`message.channel.name`: `{message.channel.name}`,\n`message.id`: `{message.id}`,\n`message.author.id`: `{message.author.id}`\n')
-            else:
-                logging.debug('message from self . . . how did the code even get here !?')
-                logging.debug(f'-----\n`message.author.name`: `{message.author.name}`\n`message.channel.id`: `{message.channel.id}`,\n`message.channel.name`: `{message.channel.name}`,\n`message.id`: `{message.id}`,\n`message.author.id`: `{message.author.id}`\n')
         # Always process commands at the end of the on_message event
         await self.process_commands(message)
-        logging.debug(f'\n-- END ON_MESSAGE FROM `{nickname}` --\n')
+        logging.debug(f'\n---- END ON_MESSAGE FROM ----> `{nickname}`\n')
 
     def get_response(self, messages, model, max_response_tokens, n_responses, specifity_creativity):
         try:
