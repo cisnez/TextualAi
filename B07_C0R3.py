@@ -126,7 +126,7 @@ class D15C0R6(commANDs.Bot):
                 if message.content.startswith(prefix):
                     logging.debug(f'Ignoring message due to prefix: {prefix}\n')
 
-        elif message.author.id in self.allow_author_ids or message.channel.id in self.allow_channel_ids:
+        elif message.channel.id in self.allow_channel_ids or self.user.mentioned_in(message):
             logging.debug(f"\nMessage from {message.author.name} received:\n{message.content}\n")
             # The bot will show as typing while executing the code inside this block
             # So place your logic that takes time inside this block

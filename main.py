@@ -6,7 +6,7 @@ bot_name = sys.argv[1].lower()
 
 # Set logging.DEBUG to see ALL logs; set logging.INFO for less
 import logging
-logging.basicConfig(level=logging.INFO, filename=f'main~{bot_name}.log', filemode='w')
+logging.basicConfig(level=logging.DEBUG, filename=f'main~{bot_name}.log', filemode='w')
 
 # Create a yaml object
 from B07_Y4ML import Y4ML
