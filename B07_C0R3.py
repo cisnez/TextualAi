@@ -76,7 +76,12 @@ class D15C0R6(commANDs.Bot):
             self.msgs.add_to_messages(message.channel.id, self.name, f"Malformed message from {nickname}.", "system")
             logging.info("<|separator|> violation found in message.")
 
+        elif message.attachments and not message.content:
+            self.msgs.add_to_messages(message.channel.id, nickname, "Attachment with no message posted.", "system")
+            logging.debug("Message with attachment and no text received.")
+        
         elif message.author.id == self.user.id:
+            # Be sure to messages with attachments and no content, lest we break OpenAI API with a blank message.
             self.msgs.add_to_messages(message.channel.id, self.name, message.content, "assistant")
             logging.debug(f'{self.name}: Added message with assistant role.')
 
@@ -85,10 +90,6 @@ class D15C0R6(commANDs.Bot):
             self.msgs.add_to_messages(message.channel.id, "system", f"Ignored message from {nickname}", "system")
             logging.debug(f'Ignoring Author: {nickname}')
 
-        elif message.attachments and not message.content:
-            self.msgs.add_to_messages(message.channel.id, nickname, "Attachment with no message posted.", "system")
-            logging.debug("Message with attachment and no text received.")
-        
         elif message.content.startswith('.delete') and (message.author.id in self.allow_author_ids):
             if message.reference:  # Check if the message is a reply
                 try:
