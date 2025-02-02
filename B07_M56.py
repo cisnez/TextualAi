@@ -9,14 +9,16 @@ transformer_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 class M56:
     # Initialize a M56 instance.
-    def __init__(self, xai_client, system_message, messages_per_channel):
+    def __init__(self, xai_client, system_message, messages_per_channel, bot_name):
         self.xai_client = xai_client
-        # Create a messages dictionary
-        self.messages_by_channel = {}
         self.system_message = system_message
         self.messages_per_channel = messages_per_channel
+        self.bot_name = bot_name
+        # Create a messages dictionary
+        self.messages_by_channel = {}
+        
         self.embedding_function = EmbeddingFunction()
-        self.chroma_client = chromadb.PersistentClient(path="./chromadb_data")
+        self.chroma_client = chromadb.PersistentClient(path=f"./{self.bot_name}_data")
         self.collection = self.chroma_client.get_or_create_collection(name="conversations", embedding_function=self.embedding_function)
     """
     This class represents a Message manager, providing functionalities related to conversations. 
