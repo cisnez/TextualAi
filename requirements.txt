@@ -4,3 +4,4 @@ open
 asyncio
 chromadb
 sentence_transformers
+PyYAML
