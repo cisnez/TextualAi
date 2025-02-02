@@ -141,7 +141,7 @@ class D15C0R6(commANDs.Bot):
                 # Add context to the prompt
                 logging.debug(f"\nSending usr_prompt to Grok\n{messages}\n")
                 response_text = self.get_response(messages, self.llm_model, self.response_tokens, 1, self.specifity_creativity)
-                if response_text:
+                if response_text != "<|separator|>" is not None:
                     # Add response text to messages at start of on_message()
                     await message.channel.send(response_text)
                     logging.debug(f"\nMessage history:\n{self.msgs.messages_by_channel[message.channel.id]}\n")
