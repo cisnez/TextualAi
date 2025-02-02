@@ -6,16 +6,15 @@ from discord import Intents as InTeNTs
 from discord import utils as UtIls
 
 class D15C0R6(commANDs.Bot):
-    def __init__(self, xai_client, discord_token, bot_init_data, bot_name, msgs):
+    def __init__(self, discord_token, bot_init_data, bot_name, msgs):
         self.name = bot_name
-        self.xai_client = xai_client
         self.msgs = msgs
-        self.response_tokens = bot_init_data["response_tokens"]
         self.discord_token = discord_token
         self.command_prefix = bot_init_data["command_prefix"]
         # Assign all yaml values within the __init__ method
         self.home_channel_id = bot_init_data["home_channel_id"]
         self.ignored_prefixes = bot_init_data["ignored_prefixes"]
+        self.response_tokens = bot_init_data["response_tokens"]
         self.llm_model = bot_init_data["llm_model"]
         self.specifity_creativity = bot_init_data["specifity_creativity"]
         # A set ensures that these collections only store unique elements
@@ -137,10 +136,11 @@ class D15C0R6(commANDs.Bot):
                 # Remove bot's mention from the message
                 clean_message = UtIls.remove_markdown(str(self.user.mention))
                 prompt_without_mention = message.content.replace(clean_message, "").strip()
-                messages = self.msgs.add_to_messages(message.channel.id, nickname, prompt_without_mention, "user")
-                # Add context to the prompt
-                logging.debug(f"\nSending usr_prompt to Grok\n{messages}\n")
-                response_text = self.get_response(messages, self.llm_model, self.response_tokens, 1, self.specifity_creativity)
+
+#                messages = self.msgs.add_to_messages(message.channel.id, nickname, prompt_without_mention, "user")
+#                response_text = self.msgs.get_llm_response(messages, self.llm_model, self.response_tokens, 1, self.specifity_creativity)
+                response_text = self.msgs.respond_to_user(message.channel.id, nickname, prompt_without_mention, self.llm_model, self.response_tokens, self.specifity_creativity)
+                logging.info(f"Response Text:\n{response_text}")
                 if response_text != "<|separator|>" is not None:
                     # Add response text to messages at start of on_message()
                     await message.channel.send(response_text)
@@ -157,25 +157,3 @@ class D15C0R6(commANDs.Bot):
         await self.process_commands(message)
         logging.debug(f'\n---- END ON_MESSAGE FROM ----> `{nickname}`\n')
 
-    def get_response(self, messages, model, max_response_tokens, n_responses, specifity_creativity):
-        try:
-            completions = self.xai_client.chat.completions.create(
-                # "grok-beta" set in the init file
-                model=model,
-                # messages=[
-                #     {"role": "system", "content": sys_prompt},
-                #     {"role": "user", "content": usr_prompt},
-                # ],
-                messages = messages,  # from build_messages method
-                max_tokens = max_response_tokens,
-                n=n_responses,
-                stop=None,
-                # specifity < 0.5 > creativity
-                temperature=specifity_creativity,
-            )
-            response = completions.choices[0].message.content
-            return response
-        except Exception as e:
-            exception_error = (f"Error in get_response: {e}")
-            logging.error(exception_error)
-            return exception_error

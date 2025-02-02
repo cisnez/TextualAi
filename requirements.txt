@@ -1,4 +1,6 @@
 textual
 discord
-openai
+open
 asyncio
+chromadb
+sentence_transformers
