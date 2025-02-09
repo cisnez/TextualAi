@@ -19,7 +19,7 @@ class M56:
         
         self.embedding_function = EmbeddingFunction()
         self.chroma_client = chromadb.PersistentClient(path=f"./{self.bot_name}_data")
-        self.collection = self.chroma_client.get_or_create_collection(name="conversations", embedding_function=self.embedding_function)
+        self.collection = self.chroma_client.get_or_create_collection(name="conversations", embedding_function=self.embedding_function, metadata={"hnsw:space": "l2", "hnsw:efConstruction": 200, "hnsw:M": 48})
     """
     This class represents a Message manager, providing functionalities related to conversations. 
     """
