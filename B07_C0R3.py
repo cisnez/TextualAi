@@ -140,7 +140,6 @@ class D15C0R6(commANDs.Bot):
 #                messages = self.msgs.add_to_messages(message.channel.id, nickname, prompt_without_mention, "user")
 #                response_text = self.msgs.get_llm_response(messages, self.llm_model, self.response_tokens, 1, self.specifity_creativity)
                 response_text = self.msgs.respond_to_user(message.channel.id, nickname, prompt_without_mention, self.llm_model, self.response_tokens, self.specifity_creativity)
-                logging.info(f"Response Text:\n{response_text}")
                 if response_text != "<|separator|>" is not None:
                     # Add response text to messages at start of on_message()
                     await message.channel.send(response_text)

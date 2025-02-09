@@ -19,7 +19,7 @@ class M56:
         
         self.embedding_function = EmbeddingFunction()
         self.chroma_client = chromadb.PersistentClient(path=f"./{self.bot_name}_data")
-        self.collection = self.chroma_client.get_or_create_collection(name="conversations", embedding_function=self.embedding_function, metadata={"hnsw:space": "l2", "hnsw:efConstruction": 200, "hnsw:M": 48})
+        self.collection = self.chroma_client.get_or_create_collection(name="conversations", embedding_function=self.embedding_function, metadata={"hnsw:space": "l2"})
     """
     This class represents a Message manager, providing functionalities related to conversations. 
     """
@@ -71,7 +71,7 @@ class M56:
             {"role": "user", "content": message}
             ]
         context_response = self.get_llm_response(context, model, max_response_tokens, 1, 0.42)
-        logging.info(f"Context:\n{context_response}")
+        logging.debug(f"Context:\n{context_response}")
         
         # Query saved messages with the context response
         query_results = self.collection.query(
@@ -91,11 +91,11 @@ class M56:
 
         # Append ephemeral messages to messages
         messages.extend(self.messages_by_channel[channel_id])
-        logging.info(f"Messages:\n{messages}")
+        logging.debug(f"Messages:\n{messages}")
         
         # Get response from LLM
         response_text = self.get_llm_response(messages, model, max_response_tokens, 2, specifity_creativity)
-        
+        logging.debug(f"Response Text:\n{response_text}")
         return response_text
 
     def get_llm_response(self, messages, model, max_response_tokens, n_responses, specifity_creativity):
