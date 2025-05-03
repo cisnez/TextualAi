@@ -1,6 +1,6 @@
 textual
 discord
-open
+openai
 asyncio
 chromadb
 sentence_transformers
